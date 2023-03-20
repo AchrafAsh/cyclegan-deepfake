@@ -3,6 +3,7 @@ import torch.nn as nn
 from torch.nn import init
 import functools
 from torch.optim import lr_scheduler
+from torchvision.models.vgg import vgg16
 
 
 ###############################################################################
@@ -226,7 +227,6 @@ class TVLoss(nn.Module):
     def tensor_size(t):
         return t.size()[1] * t.size()[2] * t.size()[3]
 
-from torchvision.models.vgg import vgg16
 
 class ContentLoss(nn.Module):
     def __init__(self):
@@ -278,7 +278,6 @@ class GANLoss(nn.Module):
             self.loss = None
         else:
             raise NotImplementedError('gan mode %s not implemented' % gan_mode)
-        self.content_loss = ContentLoss()
 
     def get_target_tensor(self, prediction, target_is_real):
         """Create label tensors with the same size as the input.
@@ -316,7 +315,7 @@ class GANLoss(nn.Module):
             else:
                 loss = prediction.mean()
 
-        return loss + self.content_loss(out_images, target_images)
+        return loss
 
 
 def cal_gradient_penalty(netD, real_data, fake_data, device, type='mixed', constant=1.0, lambda_gp=10.0):
